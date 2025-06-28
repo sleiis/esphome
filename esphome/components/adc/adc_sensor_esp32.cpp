@@ -83,10 +83,9 @@ void ADCSensor::setup() {
   };
   ESP_ERROR_CHECK(adc_oneshot_new_unit(&unit_cfg, &this->adc_handle_));
 
-adc_oneshot_chan_cfg_t chan_cfg = {
-      .bitwidth = ADC_BITWIDTH_DEFAULT,
-      .atten = this->attenuation_,
-  };
+adc_oneshot_chan_cfg_t chan_cfg;
+chan_cfg.bitwidth = ADC_BITWIDTH_DEFAULT;
+chan_cfg.atten = this->attenuation_;
 
   ESP_ERROR_CHECK(adc_oneshot_config_channel(this->adc_handle_, convert_adc1_to_channel(this->channel1_), &chan_cfg));
 
