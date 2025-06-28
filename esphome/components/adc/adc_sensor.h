@@ -8,6 +8,9 @@
 #ifdef USE_ESP32
 #include <esp_adc_cal.h>
 #include "driver/adc.h"
+#include "esp_adc/adc_oneshot.h"
+#include "esp_adc/adc_cali.h"
+#include "esp_adc/adc_cali_scheme.h"
 #endif  // USE_ESP32
 
 namespace esphome {
@@ -94,14 +97,6 @@ class ADCSensor : public sensor::Sensor, public PollingComponent, public voltage
   adc_oneshot_unit_handle_t adc_handle_{nullptr};
   adc_cali_handle_t cali_handle_{nullptr};
   bool calibration_available_{false};
-  adc_atten_t attenuation_{ADC_ATTEN_DB_0};
-  adc1_channel_t channel1_{ADC1_CHANNEL_MAX};
-  adc2_channel_t channel2_{ADC2_CHANNEL_MAX};
-  bool autorange_{false};
-#if ESP_IDF_VERSION_MAJOR >= 5
-  esp_adc_cal_characteristics_t cal_characteristics_[SOC_ADC_ATTEN_NUM] = {};
-#else
-  esp_adc_cal_characteristics_t cal_characteristics_[ADC_ATTEN_MAX] = {};
 #endif  // ESP_IDF_VERSION_MAJOR
 #endif  // USE_ESP32
 };
