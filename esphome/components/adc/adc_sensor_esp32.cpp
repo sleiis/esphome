@@ -131,7 +131,7 @@ void ADCSensor::dump_config() {
     case ADC_ATTEN_DB_6:
       ESP_LOGCONFIG(TAG, "  Attenuation: 6db");
       break;
-    case ADC_ATTEN_DB_11:
+    case ADC_ATTEN_DB_12_COMPAT:
       ESP_LOGCONFIG(TAG, "  Attenuation: 11db");
       break;
     default:
