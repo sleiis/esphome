@@ -12,6 +12,8 @@ namespace esphome {
 namespace adc {
 
 static const char *const TAG = "adc.esp32";
+static inline adc_channel_t convert_adc1_to_channel(adc1_channel_t ch) { return static_cast<adc_channel_t>(ch); }
+static inline adc_channel_t convert_adc2_to_channel(adc2_channel_t ch) { return static_cast<adc_channel_t>(ch); }
 
 static bool adc_calibration_init(adc_unit_t unit, adc_channel_t channel, adc_atten_t atten,
                                  adc_cali_handle_t *out_handle) {
@@ -85,10 +87,9 @@ void ADCSensor::setup() {
       .bitwidth = ADC_BITWIDTH_DEFAULT,
       .atten = this->attenuation_,
   };
-  ESP_ERROR_CHECK(adc_oneshot_config_channel(this->adc_handle_, this->channel1_, &chan_cfg));
+  ESP_ERROR_CHECK(adc_oneshot_config_channel(this->adc_handle_, convert_adc1_to_channel(this->channel1_), &chan_cfg));
 
-  this->calibration_available_ =
-      adc_calibration_init(ADC_UNIT_1, this->channel1_, this->attenuation_, &this->cali_handle_);
+  this->calibration_available_ = this->calibration_available_ = adc_calibration_init(ADC_UNIT_1, convert_adc1_to_channel(this->channel1_), this->attenuation_, &this->cali_handle_);
 }
 
 float ADCSensor::sample() {
@@ -100,11 +101,11 @@ float ADCSensor::sample() {
   int raw = 0;
   int mv = 0;
 
-  if (adc_oneshot_read(this->adc_handle_, this->channel1_, &raw) != ESP_OK) {
+if (adc_oneshot_read(this->adc_handle_, convert_adc1_to_channel(this->channel1_), &raw) != ESP_OK) {
     ESP_LOGE(TAG, "ADC read failed");
     return NAN;
   }
-
+ESP_LOGV(TAG, "'%s': Got raw value=%d", this->get_name().c_str(), raw);
   if (this->calibration_available_) {
     if (adc_cali_raw_to_voltage(this->cali_handle_, raw, &mv) != ESP_OK) {
       ESP_LOGW(TAG, "Calibration failed");
