@@ -66,7 +66,7 @@ class ADCSensor : public sensor::Sensor, public PollingComponent, public voltage
   void update() override;
   /// Setup ADC
   void setup() override;
-  ~ADCSensor() override;
+  ~ADCSensor();
   void dump_config() override;
   /// `HARDWARE_LATE` setup priority
   float get_setup_priority() const override;
