@@ -13,11 +13,11 @@ namespace adc {
 
 static const char *const TAG = "adc.esp32";
 
-// Kanal-Konvertierung
+
 static inline adc_channel_t convert_adc1_to_channel(adc1_channel_t ch) { return static_cast<adc_channel_t>(ch); }
 static inline adc_channel_t convert_adc2_to_channel(adc2_channel_t ch) { return static_cast<adc_channel_t>(ch); }
 
-// Kalibrierung
+
 static bool adc_calibration_init(adc_unit_t unit, adc_channel_t channel, adc_atten_t atten,
                                  adc_cali_handle_t *out_handle) {
   adc_cali_handle_t handle = nullptr;
@@ -76,7 +76,6 @@ static void adc_calibration_deinit(adc_cali_handle_t handle) {
 void ADCSensor::setup() {
   ESP_LOGCONFIG(TAG, "Setting up ADC for '%s'", this->get_name().c_str());
 
-  // Gemeinsamer Handle für alle Instanzen
   static adc_oneshot_unit_handle_t shared_adc1_handle = nullptr;
 
   if (shared_adc1_handle == nullptr) {
@@ -89,7 +88,7 @@ void ADCSensor::setup() {
 
   this->adc_handle_ = shared_adc1_handle;
 
-  // Initiale Kalibrierung (nicht Kanal-konfig)
+
   this->calibration_available_ = adc_calibration_init(ADC_UNIT_1, convert_adc1_to_channel(this->channel1_),
                                                       this->attenuation_, &this->cali_handle_);
 }
@@ -100,7 +99,7 @@ float ADCSensor::sample() {
     return NAN;
   }
 
-  // Kanal vor jedem read neu konfigurieren
+
   adc_oneshot_chan_cfg_t chan_cfg;
   chan_cfg.bitwidth = ADC_BITWIDTH_DEFAULT;
   chan_cfg.atten = this->attenuation_;
@@ -152,7 +151,7 @@ void ADCSensor::dump_config() {
 }
 
 ADCSensor::~ADCSensor() {
-  // shared_adc1_handle wird absichtlich nicht gelöscht
+
   if (this->calibration_available_) {
     adc_calibration_deinit(this->cali_handle_);
   }
